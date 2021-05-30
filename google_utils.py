@@ -68,3 +68,63 @@ def get_sheets_info(spreadsheets, spreadsheets_id, sheet_number=0):
     }
 
     return sheet_info
+
+
+def get_host_list(spreadsheets, spreadsheets_id, range):
+    """Get host list from sheet in range
+
+    Args:
+        spreadsheets (obj):
+            spregseets obj from auth func
+        spreadsheets_id (str):
+            spredsheet id
+        range (str):
+            range aka "Sheet1!A1:B1"
+
+    Returns:
+        list of lists: [[0.0.0.0],[1.1.1.1]]
+        why list of lists?
+        this is native response from google api,
+        for compatibility with other functions,
+        and for future to send more values in requests
+    """
+    result = spreadsheets.values().get(
+        spreadsheetId=spreadsheets_id,
+        range=range,
+        majorDimension='ROWS'
+    ).execute()
+    values = result.get('values')
+    return values
+
+def split_cell_name(cell):
+    """
+    Split cell 
+    """
+    letters = cell[
+        int(cell.find(cell[0])):
+        int(cell.rfind(
+            cell[0]) + 1):
+    ]
+
+    numbers = cell[
+        (cell.rfind(cell[0])) + 1:
+        len(cell)
+    ]
+    return [letters, numbers]
+    
+def gen_max_range_str(start_cell, sheet_info):
+    """Make googlesheet range string from start_cell to sheet_info['row_count'] like "Sheet1!A1:B1"
+
+    Args:
+        start_cell (string):
+            first cell name
+        sheet_info (dict):
+            dict generated from get_sheets_info()
+
+    Returns:
+        string:
+            aka "Sheet1!A1:B1"
+    """
+    letters = split_cell_name(start_cell)[0]
+    range = sheet_info['title'] + "!" + start_cell + ":" + letters + str(sheet_info['row_count'])
+    return range

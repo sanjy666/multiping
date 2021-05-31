@@ -1,39 +1,38 @@
 # multiping
-multi ping tool with gui in google sheet
+Multi ping tool with gui in google sheet
+python > 3.6
+OS linux windows
 
-Befor install
-    Create google project
-        https://developers.google.com/workspace/guides/create-project
+# Befor install
+- Create google project https://developers.google.com/workspace/guides/create-project 
+- Create credentials https://developers.google.com/workspace/guides/create-credentials
+- this software use client oauth NOT SERVICE AUTH
+- Save user oauth json file NOT USE SERVICE ACCOUNT FILE
 
-    and create credentials
-        this software use client oauth NOT SERVICE AUTH
-        https://developers.google.com/workspace/guides/create-credentials
+# Install
 
-    Save user oauth json file NOT USE SERVICE ACCOUNT FILE
+- clone repo
 
-Install
+- copy oauth json file in to repo dir and rename it to credentials.json or change you filename config.ini
 
-1 clone repo
+- install packages
+    - pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib oauth2client
 
-2 copy oauth json file in to repo dir and rename it to credentials.json or change you filename config.ini
+- edit config.ini as your need
+    - spreadsheet_id : get for spreadsheet url
+        - (https://docs.google.com/spreadsheets/d/1YTUhC0HaHSKriLKEeu6Byp_wOsVkJbxeOe1myCOEPjs)
+    - sheet_number : change sheet number as it is visible in googlesheet site, started as 0
+    - first_ip_cell : B3 аirst ips cell 
+    - first_ms_cell : C3 аirst responses ms cell
+    - paralel_work : 10 these settings change how much to spawn concurrent cmd pings
 
-3 install packages
-    pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib oauth2client
+# Run
+- run one
+    -"python main.py"
+- run loop 
+    -"python main.py -d 30"
+    - -d = delay
+    - 30 = seconds
 
-4 edit config.ini as your need
-    spreadsheet_id : get for spreadsheet url (https://docs.google.com/spreadsheets/d/1YTUhC0HaHSKriLKEeu6Byp_wOsVkJbxeOe1myCOEPjs)
-    sheet_number : change sheet number as it is visible in googlesheet site, started as 0
-    first_ip_cell : B3 аirst ips cell 
-    first_ms_cell : C3 аirst responses ms cell
-    paralel_work : 10 these settings change how much to spawn concurrent cmd pings
-
-Run
-    run one
-        "python main.py"
-    run loop 
-        "python main.py -d 30"
-            -d = delay
-            30 = seconds
-
-features?
-    !!! replace all Conditional Formatting for sheet
+# features?
+- !!! replace all Conditional Formatting for sheet

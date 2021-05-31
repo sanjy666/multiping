@@ -96,6 +96,7 @@ def get_host_list(spreadsheets, spreadsheets_id, range):
     values = result.get('values')
     return values
 
+
 def split_cell_name(cell):
     """
     Split cell 
@@ -111,7 +112,8 @@ def split_cell_name(cell):
         len(cell)
     ]
     return [letters, numbers]
-    
+
+
 def gen_max_range_str(start_cell, sheet_info):
     """Make googlesheet range string from start_cell to sheet_info['row_count'] like "Sheet1!A1:B1"
 
@@ -126,5 +128,6 @@ def gen_max_range_str(start_cell, sheet_info):
             aka "Sheet1!A1:B1"
     """
     letters = split_cell_name(start_cell)[0]
-    range = sheet_info['title'] + "!" + start_cell + ":" + letters + str(sheet_info['row_count'])
+    range = sheet_info['title'] + "!" + start_cell + \
+        ":" + letters + str(sheet_info['row_count'])
     return range

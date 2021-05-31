@@ -14,7 +14,7 @@ def auth(scopes, credentials_filename, token_filename):
         token_filename (string): token filename
 
     Returns:
-        obj: Google spredsheet object
+        obj: Google spreadsheet object
     """
 
     creds = None
@@ -56,9 +56,11 @@ def get_sheets_info(spreadsheets, spreadsheets_id, sheet_number=0):
                 'conditional_formats': conditional formats.
     """
     spreadsheets = spreadsheets.get(spreadsheetId=spreadsheets_id).execute()
-
     properties = spreadsheets['sheets'][sheet_number]['properties']
-    conditional_formats = spreadsheets['sheets'][sheet_number]['conditionalFormats']
+    if 'conditionalFormats' not in spreadsheets['sheets'][sheet_number].keys():
+        conditional_formats = []
+    else:
+        conditional_formats = spreadsheets['sheets'][sheet_number]['conditionalFormats']
 
     sheet_info = {
         'sheet_id': properties['sheetId'],
@@ -77,7 +79,7 @@ def get_host_list(spreadsheets, spreadsheets_id, start_cell, sheet_info):
         spreadsheets (obj):
             spregseets obj from auth func
         spreadsheets_id (str):
-            spredsheet id
+            spreadsheet id
         range (str):
             range aka "Sheet1!A1:B1"
 
@@ -159,3 +161,127 @@ def push_update_values(sheet, spreadsheet_id, first_ms_cell, sheet_info, values)
         }
     ).execute()
     return result
+
+
+def del_all_conditional_format(spreadsheets, spreadsheet_id, sheet_info):
+    indexCount = len(sheet_info['conditional_formats'])
+
+    if indexCount == 0:
+        return
+
+    requests = []
+
+    delRequest = {
+        "deleteConditionalFormatRule":
+        {
+            "sheetId": sheet_info['sheet_id'],
+            "index": 0,
+        }
+    }
+
+    for i in range(0, indexCount):
+        requests.append(delRequest)
+
+    body = {
+        'requests': requests
+    }
+
+    result = spreadsheets.batchUpdate(
+        spreadsheetId=spreadsheet_id,
+        body=body,
+    ).execute()
+
+    return result
+
+
+def a1_to_num(cell_letters):
+    dictionary = {
+        'A': '0', 'B': '1', 'C': '2', 'D': '3', 'E': '4', 'F': '5', 'G': '6',
+        'H': '7', 'I': '8', 'J': '9', 'K': '10', 'L': '11', 'M': '12', 'N': '13',
+        'O': '14', 'P': '15', 'Q': '16', 'R': '17', 'S': '18', 'T': '19', 'U': '20',
+        'V': '21', 'W': '22', 'X': '23', 'Y': '24', 'Z': '25',
+    }
+    table = cell_letters.maketrans(dictionary)
+    if len(cell_letters) > 1:
+        print('AA format not support')
+        return -1
+    else:
+        return int(cell_letters.translate(table))
+
+def addFormatting(spreadsheets, spreadsheet_id, sheet_info, first_ms_cell):
+    col_litters = split_cell_name(first_ms_cell)[0]
+    col_num = a1_to_num(col_litters)
+    range = {
+        'sheetId': sheet_info['sheet_id'],
+        "startRowIndex": split_cell_name(first_ms_cell)[1] - 1,
+        "endRowIndex": sheet_info['row_count'],
+        "startColumnIndex": col_num,
+        "endColumnIndex": col_num + 1
+    }
+    spreadsheets.batchUpdate(
+        spreadsheetId=spreadsheet_id,
+        body={
+            "requests": [{
+                'addConditionalFormatRule': {
+                    'rule': {
+                        'ranges': range,
+                        'booleanRule': {
+                            'condition': {
+                                'type': 'TEXT_EQ',
+                                'values': [{
+                                    "userEnteredValue": 'n/a'
+                                }]
+                            },
+                            "format": {
+                                "backgroundColor": {
+                                    "red": 1
+                                }
+                            }
+                        }
+                    },
+                    'index': 0
+                }
+            }, {
+                'addConditionalFormatRule': {
+                    'rule': {
+                        'ranges': range,
+                        'booleanRule': {
+                            'condition': {
+                                'type': 'NUMBER_LESS_THAN_EQ',
+                                'values': [{
+                                    "userEnteredValue": "200"
+                                }]
+                            },
+                            "format": {
+                                "backgroundColor": {
+                                    "green": 1
+                                }
+                            }
+                        }
+                    },
+                    'index': 1
+                }
+            }, {
+                'addConditionalFormatRule': {
+                    'rule': {
+                        'ranges': range,
+                        'booleanRule': {
+                            'condition': {
+                                'type': 'NUMBER_GREATER',
+                                'values': [{
+                                    "userEnteredValue": "200"
+                                }]
+                            },
+                            'format': {
+                                'backgroundColor': {
+                                    'red': 1,
+                                    'green': 1
+                                }
+                            }
+                        }
+                    },
+                    'index': 2
+                }
+            }]
+        }
+    ).execute()

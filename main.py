@@ -26,7 +26,7 @@ def read_config(path):
 
 
 def main(config):
-    scopes = [config['scopes']]
+    scopes = config['scopes']
     credentials_filename = config['credentials_filename']
     token_filename = config['token_filename']
     spreadsheet_id = config['spreadsheet_id']

@@ -1,5 +1,7 @@
 # multiping
 Multi ping tool with gui in google sheet
+python > 3.6
+OS linux windows
 
 # Befor install
 - Create google project https://developers.google.com/workspace/guides/create-project 

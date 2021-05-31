@@ -14,11 +14,9 @@ def main():
         scopes, credentials_filename, token_filename)
     sheet_info = get_sheets_info(spredsheets, spreedsheet_id)
     host_list = get_host_list(
-        spredsheets, spreedsheet_id, gen_max_range_str(first_ip_cell, sheet_info))
-    print(host_list)
+        spredsheets, spreedsheet_id, first_ip_cell, sheet_info)
     result = ping_pool(host_list, paralel_work)
     print(result)
-
 
 if __name__ == "__main__":
     main()

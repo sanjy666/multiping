@@ -70,7 +70,7 @@ def get_sheets_info(spreadsheets, spreadsheets_id, sheet_number=0):
     return sheet_info
 
 
-def get_host_list(spreadsheets, spreadsheets_id, range):
+def get_host_list(spreadsheets, spreadsheets_id, start_cell, sheet_info):
     """Get host list from sheet in range
 
     Args:
@@ -88,6 +88,7 @@ def get_host_list(spreadsheets, spreadsheets_id, range):
         for compatibility with other functions,
         and for future to send more values in requests
     """
+    range = gen_max_range_str(start_cell, sheet_info)
     result = spreadsheets.values().get(
         spreadsheetId=spreadsheets_id,
         range=range,

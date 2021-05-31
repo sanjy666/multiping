@@ -70,7 +70,8 @@ if __name__ == '__main__':
     config = read_config('config.ini')
 
     if len(sys.argv) > 2 and sys.argv[1] == '-d':
-        main(config)
-        sleep(int(sys.argv[2]))
+        while True:
+            main(config)
+            sleep(int(sys.argv[2]))
     else:
         main(config)

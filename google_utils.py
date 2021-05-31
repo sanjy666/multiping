@@ -38,7 +38,7 @@ def auth(scopes, credentials_filename, token_filename):
     return service.spreadsheets()
 
 
-def get_sheets_info(spreadsheets, spreadsheets_id, sheet_number=0):
+def get_sheets_info(spreadsheets, spreadsheets_id, sheet_number):
     """Get sheet info 
 
     Args:

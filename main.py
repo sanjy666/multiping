@@ -1,26 +1,53 @@
+import sys
 from google_utils import *
 from ping import ping_pool
-scopes = "https://www.googleapis.com/auth/spreadsheets"
-credentials_filename = "credentials.json"
-token_filename = "token.json"
-spreadsheet_id = "1YTUhC0HaHSKriLKEeu6Byp_wOsVkJbxeOe1myCOEPjs"
-sheet_number = 0
-first_ip_cell = 'B3'
-first_ms_cell = 'C3'
-paralel_work = 10
+import configparser
+from time import sleep
 
 
-def main():
+def read_config(path):
+    if not os.path.exists(path):
+        retun = 0
+
+    config_file = configparser.ConfigParser()
+    config_file.read(path)
+    config = {
+        'scopes': config_file.get('main', 'scopes'),
+        'credentials_filename': config_file.get('main', 'credentials_filename'),
+        'token_filename': config_file.get('main', 'token_filename'),
+        'spreadsheet_id': config_file.get('main', 'spreadsheet_id'),
+        'sheet_number': config_file.get('main', 'sheet_number'),
+        'first_ip_cell': config_file.get('main', 'first_ip_cell'),
+        'first_ms_cell': config_file.get('main', 'first_ms_cell'),
+        'paralel_work': config_file.get('main', 'paralel_work'),
+    }
+
+    return config
+
+
+def main(config):
+    scopes = [config['scopes']]
+    credentials_filename = config['credentials_filename']
+    token_filename = config['token_filename']
+    spreadsheet_id = config['spreadsheet_id']
+    sheet_number = int(config['sheet_number'])
+    first_ip_cell = config['first_ip_cell']
+    first_ms_cell = config['first_ms_cell']
+    paralel_work = int(config['paralel_work'])
+
     spreadsheets = auth(
         scopes,
         credentials_filename,
         token_filename
     )
 
-    sheet_info = get_sheets_info(spreadsheets, spreadsheet_id)
+    sheet_info = get_sheets_info(spreadsheets, spreadsheet_id, sheet_number)
+
     del_all_conditional_format(
         spreadsheets, spreadsheet_id, sheet_info)
-    addFormatting(spreadsheets, spreadsheet_id,sheet_info, first_ms_cell)
+
+    addFormatting(spreadsheets, spreadsheet_id, sheet_info, first_ms_cell)
+
     host_list = get_host_list(
         spreadsheets,
         spreadsheet_id,
@@ -30,7 +57,7 @@ def main():
 
     ping_results = ping_pool(host_list, paralel_work)
 
-    push_result = push_update_values(
+    push_update_values(
         spreadsheets,
         spreadsheet_id,
         first_ms_cell,
@@ -39,6 +66,11 @@ def main():
     )
 
 
+if __name__ == '__main__':
+    config = read_config('config.ini')
 
-if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 2 and sys.argv[1] == '-d':
+        main(config)
+        sleep(int(sys.argv[2]))
+    else:
+        main(config)

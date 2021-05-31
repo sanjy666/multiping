@@ -112,7 +112,7 @@ def split_cell_name(cell):
         (cell.rfind(cell[0])) + 1:
         len(cell)
     ]
-    return [letters, numbers]
+    return [letters, int(numbers)]
 
 
 def gen_max_range_str(start_cell, sheet_info):
@@ -132,3 +132,30 @@ def gen_max_range_str(start_cell, sheet_info):
     range = sheet_info['title'] + "!" + start_cell + \
         ":" + letters + str(sheet_info['row_count'])
     return range
+
+
+def push_update_values(sheet, spreadsheet_id, first_ms_cell, sheet_info, values):
+    total_cell = sheet_info['row_count']
+    # last cell offset aka C3 = number 2 cell (0 = B1, 1 = B2)
+    last_cell = total_cell - (split_cell_name(first_ms_cell)[1] - 1)
+
+    # append void values for replace old not valid cells
+    for i in range(len(values), last_cell):
+        values.append([''])
+
+    ranges = gen_max_range_str(first_ms_cell, sheet_info)
+
+    result = sheet.values().batchUpdate(
+        spreadsheetId=spreadsheet_id,
+        body={
+            "valueInputOption": "USER_ENTERED",
+            "data": [
+                {
+                    "range": ranges,
+                    "majorDimension": "ROWS",
+                    "values": values
+                }
+            ]
+        }
+    ).execute()
+    return result

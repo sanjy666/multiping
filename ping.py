@@ -103,4 +103,5 @@ def ping_pool(hosts, num_threads):
     """
     p = dummy.Pool(int(num_threads))
     results = p.map(ping_worker, hosts)
+    p.close()
     return results

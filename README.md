@@ -3,7 +3,7 @@ Multi ping tool with gui in google sheet
 
 # Befor install
 - Create google project https://developers.google.com/workspace/guides/create-project 
-- Create credentials https://developers.google.com/workspace/guides/create-credentials\
+- Create credentials https://developers.google.com/workspace/guides/create-credentials
 - this software use client oauth NOT SERVICE AUTH
 - Save user oauth json file NOT USE SERVICE ACCOUNT FILE
 

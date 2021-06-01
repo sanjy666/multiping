@@ -1,7 +1,7 @@
 # multiping
 Multi ping tool with gui in google sheet
-python > 3.6
-OS linux windows
+- python >= 3.6
+- OS linux windows
 
 # Befor install
 - Create google project https://developers.google.com/workspace/guides/create-project 
@@ -22,9 +22,9 @@ OS linux windows
     - spreadsheet_id : get for spreadsheet url
         - (https://docs.google.com/spreadsheets/d/1YTUhC0HaHSKriLKEeu6Byp_wOsVkJbxeOe1myCOEPjs)
     - sheet_number : change sheet number as it is visible in googlesheet site, started as 0
-    - first_ip_cell : B3 аirst ips cell 
-    - first_ms_cell : C3 аirst responses ms cell
-    - paralel_work : 10 these settings change how much to spawn concurrent cmd pings
+    - first_ip_cell : B3 first cell ip
+    - first_ms_cell : C3 first cell ping result 
+    - parallel_work : 10 this change : how much to spawn parallel ping job
 
 # Run
 - run one
